@@ -1,12 +1,18 @@
-from pymongo import MongoClient
-from pymongo.server_api import ServerApi
+import os
+import pymongo
+import certifi
+from dotenv import load_dotenv
 
-uri = "mongodb+srv://pelletivenkatabhargav03_db_user1:Admin%40123@cluster0.hb3aqf8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+load_dotenv()
 
-client = MongoClient(uri, server_api=ServerApi('1'))
+uri = os.getenv("MONGO_DB_URL")
 
-try:
-    client.admin.command("ping")
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print("Connection failed:", e)
+client = pymongo.MongoClient(
+    uri,
+    tls=True,
+    tlsCAFile=certifi.where(),
+    serverSelectionTimeoutMS=30000
+)
+
+client.admin.command("ping")
+print("MongoDB Atlas connected successfully!")
